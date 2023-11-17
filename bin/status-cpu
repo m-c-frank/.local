@@ -1,0 +1,4 @@
+#!/bin/sh
+cpu_usage=$(top -bn 1 | grep 'Cpu(s)' | awk '{print $2}')
+echo "CPU: ${cpu_usage}%"
+

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Function to calculate and display network speed
+display_net_speed() {
+    local interface=$1
+    local rx1=$(cat /sys/class/net/"$interface"/statistics/rx_bytes)
+    local tx1=$(cat /sys/class/net/"$interface"/statistics/tx_bytes)
+    sleep 1
+    local rx2=$(cat /sys/class/net/"$interface"/statistics/rx_bytes)
+    local tx2=$(cat /sys/class/net/"$interface"/statistics/tx_bytes)
+
+    # Calculate the RX and TX rate
+    local rx_rate=$(( (rx2 - rx1) / 1024 ))
+    local tx_rate=$(( (tx2 - tx1) / 1024 ))
+
+    echo "$interface - RX: ${rx_rate} kB/s, TX: ${tx_rate} kB/s"
+}
+
+# Get all active network interfaces
+readarray -t interfaces < <(ip -br link | awk '$2 == "UP" {print $1}')
+
+# Display network speed for each active interface
+for interface in "${interfaces[@]}"; do
+    display_net_speed "$interface"
+done
+
